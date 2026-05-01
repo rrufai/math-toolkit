@@ -13,6 +13,8 @@ The CLI binary (`integrate`) SHALL accept the following argument forms:
 
 Note: there is no standalone `--verify` flag. Verification runs automatically as part of `--demo`.
 
+Note: root-finding is NOT part of the `integrate` binary. It is available via the separate `solve` binary — see the `cli-solver` spec.
+
 Arguments `<a>` and `<b>` SHALL be parsed as `f64`. Any string that cannot be parsed as `f64` SHALL cause the program to exit with a non-zero code and print an error message.
 
 #### Scenario: Expression with explicit bounds

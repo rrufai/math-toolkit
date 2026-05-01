@@ -2,6 +2,10 @@ use integrator_core::{plot, first_var, parse};
 use solver_core::solve;
 
 fn run_solve(equation: &str, a: f64, b: f64) -> Result<(), String> {
+    run_solve_with_svg(equation, a, b, "solve.svg")
+}
+
+fn run_solve_with_svg(equation: &str, a: f64, b: f64, svg_path: &str) -> Result<(), String> {
     match solve(equation, a, b) {
         Err(e) => return Err(e),
         Ok(r) => {
@@ -25,7 +29,7 @@ fn run_solve(equation: &str, a: f64, b: f64) -> Result<(), String> {
                 plot::print_ascii(&plot_expr, &var, a, b, &|x| ast.eval(x), None);
 
                 match plot::write_svg(
-                    "solve.svg",
+                    svg_path,
                     &plot_expr,
                     &var,
                     a,
@@ -35,7 +39,7 @@ fn run_solve(equation: &str, a: f64, b: f64) -> Result<(), String> {
                     r.residual,
                 ) {
                     Err(e) => eprintln!("Warning: could not write SVG: {}", e),
-                    Ok(()) => println!("  Plot saved → solve.svg"),
+                    Ok(()) => println!("  Plot saved → {}", svg_path),
                 }
             }
         }
@@ -94,3 +98,100 @@ fn main() {
         std::process::exit(1);
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn args(v: &[&str]) -> Vec<String> {
+        v.iter().map(|s| s.to_string()).collect()
+    }
+
+    // parse_bound
+    #[test]
+    fn test_parse_bound_valid() {
+        assert_eq!(parse_bound("1.5").unwrap(), 1.5);
+        assert_eq!(parse_bound("0").unwrap(), 0.0);
+        assert_eq!(parse_bound("-3").unwrap(), -3.0);
+    }
+
+    #[test]
+    fn test_parse_bound_invalid() {
+        assert!(parse_bound("abc").is_err());
+        assert!(parse_bound("").is_err());
+    }
+
+    // print_help — just verify it doesn't panic
+    #[test]
+    fn test_print_help_runs() {
+        print_help("solve");
+    }
+
+    // run() — help / no-args
+    #[test]
+    fn test_run_help_long() {
+        assert!(run(&args(&["solve", "--help"])).is_ok());
+    }
+
+    #[test]
+    fn test_run_help_short() {
+        assert!(run(&args(&["solve", "-h"])).is_ok());
+    }
+
+    #[test]
+    fn test_run_no_args() {
+        assert!(run(&args(&["solve"])).is_ok());
+    }
+
+    // run() — wrong arg count
+    #[test]
+    fn test_run_wrong_arg_count_too_few() {
+        let err = run(&args(&["solve", "x^2 - 2"])).unwrap_err();
+        assert!(err.contains("Usage"));
+    }
+
+    #[test]
+    fn test_run_wrong_arg_count_too_many() {
+        let err = run(&args(&["solve", "x^2 - 2", "1", "2", "extra"])).unwrap_err();
+        assert!(err.contains("Usage"));
+    }
+
+    // run() — bad bounds
+    #[test]
+    fn test_run_bad_lower_bound() {
+        let err = run(&args(&["solve", "x^2 - 2", "abc", "2"])).unwrap_err();
+        assert!(err.contains("not a valid number"));
+    }
+
+    #[test]
+    fn test_run_bad_upper_bound() {
+        let err = run(&args(&["solve", "x^2 - 2", "1", "xyz"])).unwrap_err();
+        assert!(err.contains("not a valid number"));
+    }
+
+    // run_solve — success (f(x)=0 form)
+    #[test]
+    fn test_run_solve_success() {
+        assert!(run_solve("x^2 - 2", 1.0, 2.0).is_ok());
+    }
+
+    // run_solve — success (f(x)=g(x) two-sided form)
+    #[test]
+    fn test_run_solve_two_sided_equation() {
+        assert!(run_solve("x^2 = 2", 1.0, 2.0).is_ok());
+    }
+
+    // run_solve — error (no sign change)
+    #[test]
+    fn test_run_solve_no_sign_change() {
+        let err = run_solve("x^2", 1.0, 3.0).unwrap_err();
+        assert!(err.contains("no sign change"));
+    }
+
+    // run_solve — SVG write error branch (write to "." which is a directory)
+    #[test]
+    fn test_run_solve_svg_write_error() {
+        assert!(run_solve_with_svg("x^2 - 2", 1.0, 2.0, ".").is_ok());
+    }
+}
+

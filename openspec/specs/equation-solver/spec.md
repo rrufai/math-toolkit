@@ -1,7 +1,7 @@
 ## ADDED Requirements
 
 ### Requirement: Solve function signature
-The crate SHALL expose a public function:
+The `solver-core` crate SHALL expose a public function:
 
 ```rust
 pub fn solve(equation: &str, a: f64, b: f64) -> Result<SolveResult, String>
@@ -16,6 +16,8 @@ pub struct SolveResult {
     pub residual: f64,   // |f(root)|
 }
 ```
+
+`solver-core` is a standalone library crate. It is NOT re-exported through `integrator_core`. Callers use `solver_core::solve` directly.
 
 #### Scenario: Successful solve
 - **WHEN** `solve("x^2 - 2", 1.0, 2.0)` is called
@@ -101,9 +103,9 @@ If the equation string cannot be parsed (after splitting on `=` and forming the 
 
 ---
 
-### Requirement: Re-export from lib.rs
-`solve` and `SolveResult` SHALL be re-exported from `integrator_core` so callers need only `use integrator_core::solve`.
+### Requirement: Crate boundary
+`solver-core` is a peer library alongside `integrator-core`. It is NOT a dependency of `integrator-core` and is NOT re-exported through it. Each consumer crate (`cli`, `web`) that needs solving must declare `solver-core` as a direct dependency and import via `use solver_core::solve`.
 
-#### Scenario: Public API accessible
-- **WHEN** a downstream crate uses `integrator_core::solve`
-- **THEN** it compiles without needing to reference `integrator_core::integrator::solve`
+#### Scenario: Direct import
+- **WHEN** a binary crate needs root-finding
+- **THEN** it imports `use solver_core::solve` directly, not via `integrator_core`
