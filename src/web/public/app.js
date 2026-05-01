@@ -20,7 +20,11 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 function showResult(el, content, isError = false) {
   el.classList.remove('hidden', 'error', 'success');
   el.classList.add(isError ? 'error' : 'success');
-  el.innerHTML = content;
+  if (isError) {
+    el.textContent = String(content);
+  } else {
+    el.innerHTML = content;
+  }
 }
 
 async function post(endpoint, body) {
