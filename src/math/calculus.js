@@ -37,8 +37,12 @@ export function derivative(expression, variable = 'x', scope = null) {
  * @returns {number} Numerical integral value
  */
 export function integrate(expression, variable = 'x', lowerBound, upperBound, steps = 1000) {
-  if (typeof lowerBound !== 'number' || typeof upperBound !== 'number') {
-    throw new Error('Lower and upper bounds must be numbers');
+  if (!Number.isFinite(lowerBound) || !Number.isFinite(upperBound)) {
+    throw new Error('Lower and upper bounds must be finite numbers');
+  }
+
+  if (!Number.isFinite(steps) || !Number.isInteger(steps) || steps <= 0) {
+    throw new Error('Steps must be a finite positive integer');
   }
 
   // Ensure steps is even
