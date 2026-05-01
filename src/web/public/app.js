@@ -1,3 +1,12 @@
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 // Tab navigation
 document.querySelectorAll('.tab-btn').forEach(btn => {
   btn.addEventListener('click', () => {
@@ -33,7 +42,7 @@ async function runEvaluate() {
   try {
     const scope = scopeRaw ? JSON.parse(scopeRaw) : {};
     const data = await post('evaluate', { expression: expr, scope });
-    showResult(resultEl, `<div class="result-label">Result</div><div class="result-value">${data.result}</div>`);
+    showResult(resultEl, `<div class="result-label">Result</div><div class="result-value">${escapeHtml(data.result)}</div>`);
   } catch (e) {
     showResult(resultEl, e.message, true);
   }
@@ -47,7 +56,7 @@ async function runSolve() {
   try {
     const data = await post('solve', { equation: eq, variable });
     const roots = data.roots.length > 0 ? data.roots.join(', ') : 'No roots found';
-    showResult(resultEl, `<div class="result-label">Roots of ${eq} = 0</div><div class="result-value">${roots}</div>`);
+    showResult(resultEl, `<div class="result-label">Roots of ${escapeHtml(eq)} = 0</div><div class="result-value">${escapeHtml(roots)}</div>`);
   } catch (e) {
     showResult(resultEl, e.message, true);
   }
@@ -63,9 +72,9 @@ async function runDerivative() {
     const body = { expression: expr, variable };
     if (pointRaw !== '') body.point = parseFloat(pointRaw);
     const data = await post('derivative', body);
-    let html = `<div class="result-label">d/d${variable} of ${expr}</div><div class="result-value">${data.derivative}</div>`;
+    let html = `<div class="result-label">d/d${escapeHtml(variable)} of ${escapeHtml(expr)}</div><div class="result-value">${escapeHtml(data.derivative)}</div>`;
     if (data.valueAtPoint !== undefined) {
-      html += `<div class="result-secondary">At ${variable} = ${pointRaw}: <strong>${data.valueAtPoint}</strong></div>`;
+      html += `<div class="result-secondary">At ${escapeHtml(variable)} = ${escapeHtml(pointRaw)}: <strong>${escapeHtml(String(data.valueAtPoint))}</strong></div>`;
     }
     showResult(resultEl, html);
   } catch (e) {
@@ -84,7 +93,7 @@ async function runIntegral() {
   }
   try {
     const data = await post('integrate', { expression: expr, variable, lower: parseFloat(lower), upper: parseFloat(upper) });
-    showResult(resultEl, `<div class="result-label">∫ ${expr} d${variable} from ${lower} to ${upper}</div><div class="result-value">${data.result}</div>`);
+    showResult(resultEl, `<div class="result-label">∫ ${escapeHtml(expr)} d${escapeHtml(variable)} from ${escapeHtml(lower)} to ${escapeHtml(upper)}</div><div class="result-value">${escapeHtml(String(data.result))}</div>`);
   } catch (e) {
     showResult(resultEl, e.message, true);
   }
@@ -113,7 +122,7 @@ async function runPlot() {
       data: {
         labels,
         datasets: [{
-          label: `f(x) = ${expr}`,
+          label: `f(x) = ${escapeHtml(expr)}`,
           data: values,
           borderColor: '#1a56db',
           backgroundColor: 'rgba(26, 86, 219, 0.08)',
