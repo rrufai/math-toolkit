@@ -145,7 +145,7 @@ fn render_ascii(
     // Zero line
     if y_min < 0.0 && y_max > 0.0 {
         if let Some(zr) = to_row(0.0) {
-            for c in 0..COLS { grid[zr][c] = '-'; }
+            for cell in &mut grid[zr] { *cell = '-'; }
         }
     }
 
