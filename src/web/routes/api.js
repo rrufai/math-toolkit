@@ -57,10 +57,23 @@ apiRouter.post('/plot', (req, res) => {
   try {
     const { expression, from = -10, to = 10, steps = 100, variable = 'x' } = req.body;
     if (!expression) return res.status(400).json({ error: 'expression is required' });
+
+    const plotFrom = Number(from);
+    const plotTo = Number(to);
+    const plotSteps = Number(steps);
+
+    if (!Number.isFinite(plotFrom) || !Number.isFinite(plotTo)) {
+      return res.status(400).json({ error: 'from and to must be finite numbers' });
+    }
+
+    if (!Number.isFinite(plotSteps) || !Number.isInteger(plotSteps) || plotSteps < 2) {
+      return res.status(400).json({ error: 'steps must be a finite integer greater than or equal to 2' });
+    }
+
     const points = [];
-    const step = (to - from) / (steps - 1);
-    for (let i = 0; i < steps; i++) {
-      const x = from + i * step;
+    const step = (plotTo - plotFrom) / (plotSteps - 1);
+    for (let i = 0; i < plotSteps; i++) {
+      const x = plotFrom + i * step;
       try {
         const y = evaluate(expression, { [variable]: x });
         points.push({ x, y: typeof y === 'number' ? y : null });
