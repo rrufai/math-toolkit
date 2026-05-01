@@ -36,6 +36,16 @@ export function solveEquation(expression, variable = 'x', initialGuess = 1) {
     return null;
   };
 
+  // Validate the expression eagerly before trying start points so that parse
+  // errors and unknown-function errors are surfaced immediately rather than
+  // being silently swallowed by the per-start-point try/catch below.
+  try {
+    math.parse(expression);
+    f(0); // evaluate at a neutral point to catch undefined functions, etc.
+  } catch (err) {
+    throw new Error(`Invalid expression "${expression}": ${err.message}`);
+  }
+
   const roots = new Set();
   const startPoints = [initialGuess, -initialGuess, 0, 2, -2, 5, -5, 10, -10, 0.5, -0.5];
 
@@ -56,7 +66,10 @@ export function solveEquation(expression, variable = 'x', initialGuess = 1) {
         if (!isDuplicate) roots.add(rounded);
       }
     } catch {
-      // skip invalid starting points
+      // Suppress only numerical errors tied to a specific starting point
+      // (e.g. domain errors like log of a negative, division by zero at
+      // that particular value).  Expression-level errors were already caught
+      // above and will not reach here.
     }
   }
 

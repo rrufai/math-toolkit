@@ -36,3 +36,7 @@ test('solves linear equation 2*x + 3 = 7', () => {
 test('throws on missing = in solveLinear', () => {
   assert.throws(() => solveLinear('2*x + 3'), /exactly one "=" sign/);
 });
+
+test('throws on invalid expression', () => {
+  assert.throws(() => solveEquation('unknownFunc(x)'), /Invalid expression/);
+});

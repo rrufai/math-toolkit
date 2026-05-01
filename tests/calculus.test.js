@@ -41,5 +41,5 @@ test('integrates constant 1 from 0 to 5 (result = 5)', () => {
 });
 
 test('throws on non-numeric bounds', () => {
-  assert.throws(() => integrate('x', 'x', 'a', 1), /must be numbers/);
+  assert.throws(() => integrate('x', 'x', 'a', 1), /must be finite numbers/);
 });
