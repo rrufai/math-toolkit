@@ -1,0 +1,21 @@
+{
+  "name": "math-toolkit",
+  "version": "1.0.0",
+  "description": "A web and command line set of mathematical tools",
+  "type": "module",
+  "main": "src/web/server.js",
+  "bin": {
+    "math-toolkit": "./bin/math-toolkit"
+  },
+  "scripts": {
+    "start": "node src/web/server.js",
+    "cli": "node bin/math-toolkit",
+    "test": "node --test tests/"
+  },
+  "dependencies": {
+    "mathjs": "^12.0.0",
+    "express": "^4.18.0",
+    "commander": "^11.0.0",
+    "asciichart": "^1.5.25"
+  }
+}

@@ -1,0 +1,2 @@
+#!/usr/bin/env node
+import('../src/cli/index.js').then(({ program }) => program.parse(process.argv));
