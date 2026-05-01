@@ -1,6 +1,4 @@
-import { create, all } from 'mathjs';
-
-const math = create(all);
+import { math, MAX_EXPRESSION_LENGTH } from './mathInstance.js';
 
 /**
  * Compute the symbolic derivative of an expression.
@@ -10,6 +8,9 @@ const math = create(all);
  * @returns {{ derivative: string, valueAtPoint?: number }}
  */
 export function derivative(expression, variable = 'x', scope = null) {
+  if (expression.length > MAX_EXPRESSION_LENGTH) {
+    throw new Error(`Expression is too long (max ${MAX_EXPRESSION_LENGTH} characters)`);
+  }
   try {
     const node = math.parse(expression);
     const derivNode = math.derivative(node, variable);
@@ -37,6 +38,9 @@ export function derivative(expression, variable = 'x', scope = null) {
  * @returns {number} Numerical integral value
  */
 export function integrate(expression, variable = 'x', lowerBound, upperBound, steps = 1000) {
+  if (expression.length > MAX_EXPRESSION_LENGTH) {
+    throw new Error(`Expression is too long (max ${MAX_EXPRESSION_LENGTH} characters)`);
+  }
   if (!Number.isFinite(lowerBound) || !Number.isFinite(upperBound)) {
     throw new Error('Lower and upper bounds must be finite numbers');
   }

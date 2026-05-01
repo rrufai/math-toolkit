@@ -53,12 +53,19 @@ apiRouter.post('/integrate', (req, res) => {
     if (lower === undefined || upper === undefined) {
       return res.status(400).json({ error: 'lower and upper bounds are required' });
     }
-    const result = integrate(expression, variable, parseFloat(lower), parseFloat(upper));
+    const parsedLower = parseFloat(lower);
+    const parsedUpper = parseFloat(upper);
+    if (!Number.isFinite(parsedLower) || !Number.isFinite(parsedUpper)) {
+      return res.status(400).json({ error: 'lower and upper bounds must be finite numbers' });
+    }
+    const result = integrate(expression, variable, parsedLower, parsedUpper);
     res.json({ result });
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
 });
+
+const MAX_PLOT_STEPS = 10000;
 
 apiRouter.post('/plot', (req, res) => {
   try {
@@ -75,6 +82,10 @@ apiRouter.post('/plot', (req, res) => {
 
     if (!Number.isFinite(plotSteps) || !Number.isInteger(plotSteps) || plotSteps < 2) {
       return res.status(400).json({ error: 'steps must be a finite integer greater than or equal to 2' });
+    }
+
+    if (plotSteps > MAX_PLOT_STEPS) {
+      return res.status(400).json({ error: `steps must not exceed ${MAX_PLOT_STEPS}` });
     }
 
     const points = [];

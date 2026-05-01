@@ -1,6 +1,4 @@
-import { create, all } from 'mathjs';
-
-const math = create(all);
+import { math, MAX_EXPRESSION_LENGTH } from './mathInstance.js';
 
 /**
  * Solve f(x) = 0 numerically using Newton's method.
@@ -39,6 +37,10 @@ export function solveEquation(expression, variable = 'x', initialGuess = 1) {
   // Validate the expression eagerly before trying start points so that parse
   // errors and unknown-function errors are surfaced immediately rather than
   // being silently swallowed by the per-start-point try/catch below.
+  if (expression.length > MAX_EXPRESSION_LENGTH) {
+    throw new Error(`Expression is too long (max ${MAX_EXPRESSION_LENGTH} characters)`);
+  }
+
   try {
     math.parse(expression);
     f(0); // evaluate at a neutral point to catch undefined functions, etc.

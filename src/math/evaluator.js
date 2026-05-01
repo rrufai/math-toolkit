@@ -1,6 +1,4 @@
-import { create, all } from 'mathjs';
-
-const math = create(all);
+import { math, MAX_EXPRESSION_LENGTH } from './mathInstance.js';
 
 /**
  * Evaluate a math expression with optional variable scope.
@@ -9,6 +7,9 @@ const math = create(all);
  * @returns {number|string} Result of the evaluation
  */
 export function evaluate(expression, scope = {}) {
+  if (expression.length > MAX_EXPRESSION_LENGTH) {
+    throw new Error(`Expression is too long (max ${MAX_EXPRESSION_LENGTH} characters)`);
+  }
   try {
     const result = math.evaluate(expression, scope);
     return result;
