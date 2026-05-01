@@ -1,0 +1,9 @@
+/target
+
+# Coverage artifacts
+*.profraw
+*.profdata
+lcov.info
+
+# Generated output files
+*.svg

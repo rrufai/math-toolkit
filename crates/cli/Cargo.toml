@@ -1,0 +1,12 @@
+[package]
+name = "rust-integrator-cli"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "integrate"
+path = "src/main.rs"
+
+[dependencies]
+integrator-core = { path = "../integrator" }
+solver-core = { path = "../solver" }
