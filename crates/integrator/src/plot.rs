@@ -20,6 +20,7 @@ pub enum PlotKind {
 }
 
 /// Write an SVG plot of `f` (and optionally `secondary`) over [`a`, `b`] to `path`.
+#[allow(clippy::too_many_arguments)]
 pub fn write_svg(
     path: &str,
     expr_str: &str,
@@ -234,7 +235,7 @@ fn render_ascii(
     for (i, c) in lbl_mid.chars().enumerate()  { let p = mid_pos + i;   if p < COLS { x_row[p] = c; } }
     for (i, c) in lbl_right.chars().enumerate(){ let p = right_pos + i; if p < COLS { x_row[p] = c; } }
     let x_row_str: String = x_row.iter().collect();
-    writeln!(out, "  {} {}{}", " ".repeat(label_w), " ", x_row_str).unwrap();
+    writeln!(out, "  {}  {}", " ".repeat(label_w), x_row_str).unwrap();
 
     out
 }
@@ -350,6 +351,7 @@ fn fmt_tick(v: f64) -> String {
 
 // ── main SVG render function ──────────────────────────────────
 
+#[allow(clippy::too_many_arguments)]
 fn render_svg_inner(
     expr_str: &str,
     var: &str,

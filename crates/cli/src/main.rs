@@ -13,7 +13,7 @@ fn demo_with_svg(label: &str, expr: &str, a: f64, b: f64, plot_mode: PlotMode, s
         Ok(r) => {
             let parsed = parse(expr).ok();
             let var = parsed.as_ref()
-                .and_then(|e| first_var(e))
+                .and_then(first_var)
                 .unwrap_or_else(|| "x".to_string());
             println!("┌─ {} ─────────────────────────────────────────", label);
             println!("│  f({})          = {}", var, expr);

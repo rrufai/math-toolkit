@@ -61,6 +61,7 @@ pub fn solve(equation: &str, a: f64, b: f64) -> Result<SolveResult, String> {
     brent(&f, a, b, fa, fb)
 }
 
+#[allow(unused_assignments)]
 pub(crate) fn brent(
     f: &dyn Fn(f64) -> f64,
     a: f64,
@@ -77,7 +78,7 @@ pub(crate) fn brent(
     let mut c = a;
     let mut fc = fa;
     let mut mflag = true;
-    let mut s = b;
+    let mut s = 0.0_f64;
     let mut d = 0.0;
 
     for i in 0..BRENT_MAX_ITER {
@@ -99,8 +100,7 @@ pub(crate) fn brent(
             s = b - fb * (b - a) / (fb - fa);
         }
 
-        let cond1 = !((3.0 * a + b) / 4.0 < s && s < b)
-            && !((3.0 * a + b) / 4.0 > s && s > b);
+        let cond1 = !((3.0 * a + b) / 4.0 < s && s < b || (3.0 * a + b) / 4.0 > s && s > b);
         let cond2 = mflag && (s - b).abs() >= (b - c).abs() / 2.0;
         let cond3 = !mflag && (s - b).abs() >= (c - d).abs() / 2.0;
         let cond4 = mflag && (b - c).abs() < BRENT_TOL;
