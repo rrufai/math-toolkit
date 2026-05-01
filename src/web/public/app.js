@@ -107,8 +107,10 @@ let chartInstance = null;
 
 async function runPlot() {
   const expr = document.getElementById('plot-expr').value.trim();
-  const from = parseFloat(document.getElementById('plot-from').value) || -10;
-  const to = parseFloat(document.getElementById('plot-to').value) || 10;
+  const parsedFrom = parseFloat(document.getElementById('plot-from').value);
+  const from = Number.isFinite(parsedFrom) ? parsedFrom : -10;
+  const parsedTo = parseFloat(document.getElementById('plot-to').value);
+  const to = Number.isFinite(parsedTo) ? parsedTo : 10;
   const resultEl = document.getElementById('plot-result');
   if (!expr) { showResult(resultEl, 'Please enter an expression.', true); return; }
   try {
