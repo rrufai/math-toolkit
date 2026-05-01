@@ -58,6 +58,9 @@ program
   .option('-p, --point <number>', 'Evaluate derivative at this point', parseFloat)
   .action((expression, options) => {
     try {
+      if (options.point !== undefined && !Number.isFinite(options.point)) {
+        throw new Error('Invalid value for --point: expected a finite number');
+      }
       const scope = options.point !== undefined ? { [options.variable]: options.point } : null;
       const result = derivative(expression, options.variable, scope);
       console.log(`\nExpression: ${expression}`);
