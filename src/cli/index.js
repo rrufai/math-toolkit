@@ -101,6 +101,10 @@ program
   .action((expression, options) => {
     try {
       const { from, to, steps, variable } = options;
+      const MAX_PLOT_STEPS = 10000;
+      if (!Number.isInteger(steps) || steps < 2 || steps > MAX_PLOT_STEPS) {
+        throw new Error(`steps must be an integer between 2 and ${MAX_PLOT_STEPS}`);
+      }
       const series = [];
       const step = (to - from) / (steps - 1);
       for (let i = 0; i < steps; i++) {
