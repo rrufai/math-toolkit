@@ -27,11 +27,11 @@
       <h2>Expression Evaluator</h2>
       <p class="hint">Examples: <code>2 + 3 * sin(pi/4)</code>, <code>sqrt(16)</code>, <code>log(e)</code></p>
       <div class="form-group">
-        <label>Expression</label>
+        <label for="eval-expr">Expression</label>
         <input type="text" id="eval-expr" placeholder="e.g. 2*x + 1" />
       </div>
       <div class="form-group">
-        <label>Variables (JSON)</label>
+        <label for="eval-scope">Variables (JSON)</label>
         <input type="text" id="eval-scope" placeholder='e.g. {"x": 3}' />
       </div>
       <button class="btn-primary" onclick="runEvaluate()">Evaluate</button>
@@ -43,11 +43,11 @@
       <h2>Equation Solver</h2>
       <p class="hint">Enter expression equal to 0. Examples: <code>x^2 - 4</code>, <code>x^3 - x</code></p>
       <div class="form-group">
-        <label>Equation (= 0)</label>
+        <label for="solve-eq">Equation (= 0)</label>
         <input type="text" id="solve-eq" placeholder="e.g. x^2 - 4" />
       </div>
       <div class="form-group">
-        <label>Variable</label>
+        <label for="solve-var">Variable</label>
         <input type="text" id="solve-var" value="x" />
       </div>
       <button class="btn-primary" onclick="runSolve()">Solve</button>
@@ -59,15 +59,15 @@
       <h2>Derivative Calculator</h2>
       <p class="hint">Examples: <code>x^3 + 2*x</code>, <code>sin(x) * cos(x)</code></p>
       <div class="form-group">
-        <label>Expression</label>
+        <label for="deriv-expr">Expression</label>
         <input type="text" id="deriv-expr" placeholder="e.g. x^3 + 2*x" />
       </div>
       <div class="form-group">
-        <label>Variable</label>
+        <label for="deriv-var">Variable</label>
         <input type="text" id="deriv-var" value="x" />
       </div>
       <div class="form-group">
-        <label>Evaluate at point (optional)</label>
+        <label for="deriv-point">Evaluate at point (optional)</label>
         <input type="number" id="deriv-point" placeholder="e.g. 2" />
       </div>
       <button class="btn-primary" onclick="runDerivative()">Compute</button>
@@ -79,20 +79,20 @@
       <h2>Integral Calculator</h2>
       <p class="hint">Numerical integration using Simpson's rule. Examples: <code>x^2</code>, <code>sin(x)</code></p>
       <div class="form-group">
-        <label>Expression</label>
+        <label for="integ-expr">Expression</label>
         <input type="text" id="integ-expr" placeholder="e.g. x^2" />
       </div>
       <div class="form-group">
-        <label>Variable</label>
+        <label for="integ-var">Variable</label>
         <input type="text" id="integ-var" value="x" />
       </div>
       <div class="form-row">
         <div class="form-group">
-          <label>Lower Bound</label>
+          <label for="integ-lower">Lower Bound</label>
           <input type="number" id="integ-lower" placeholder="0" />
         </div>
         <div class="form-group">
-          <label>Upper Bound</label>
+          <label for="integ-upper">Upper Bound</label>
           <input type="number" id="integ-upper" placeholder="1" />
         </div>
       </div>
@@ -105,16 +105,16 @@
       <h2>Function Plotter</h2>
       <p class="hint">Examples: <code>sin(x)</code>, <code>x^2 - 1</code>, <code>exp(-x^2)</code></p>
       <div class="form-group">
-        <label>Expression</label>
+        <label for="plot-expr">Expression</label>
         <input type="text" id="plot-expr" placeholder="e.g. sin(x)" />
       </div>
       <div class="form-row">
         <div class="form-group">
-          <label>From</label>
+          <label for="plot-from">From</label>
           <input type="number" id="plot-from" value="-10" />
         </div>
         <div class="form-group">
-          <label>To</label>
+          <label for="plot-to">To</label>
           <input type="number" id="plot-to" value="10" />
         </div>
       </div>
