@@ -76,13 +76,36 @@ differentiate "exp(x^2)"
 cargo run -p rust-integrator-web -- start
 ```
 
-Runs on **port 5150**. Three endpoints:
+Runs on **port 5150**.
+
+### HTML endpoints
 
 | Method | Path | Description |
 |--------|------|-------------|
-| `GET` | `/` | HTML form UI |
-| `POST` | `/integrate` | HTML result with ASCII plot + SVG |
-| `GET` | `/api/integrate?expr=&a=&b=` | JSON: `{symbolic, numerical, ascii_plot, svg}` |
+| `GET` | `/` | HTML form UI (integrate, differentiate, solve) |
+| `POST` | `/integrate` | Integrate — returns HTML result with inline SVG |
+| `POST` | `/differentiate` | Differentiate — returns HTML result with inline SVG |
+| `POST` | `/solve` | Root-finding — returns HTML result with inline SVG |
+
+Form fields: `POST /integrate` and `POST /differentiate` use `expr`, `a`, `b`. `POST /solve` uses `equation`, `a`, `b`.
+
+### JSON API endpoints
+
+| Method | Path | Response |
+|--------|------|----------|
+| `GET` | `/api/integrate?expr=&a=&b=` | `{"symbolic": "...\|null", "numerical": 0.0, "svg": "..."}` |
+| `GET` | `/api/differentiate?expr=&a=&b=` | `{"derivative": "...", "svg": "..."}` |
+| `GET` | `/api/solve?equation=&a=&b=` | `{"root": 0.0, "residual": 0.0, "iterations": 0, "svg": "..."}` |
+
+On error, JSON endpoints return `{"error": "..."}` with status `200`. Bad numeric parameters return `422` from the framework.
+
+**Examples**
+
+```bash
+curl "http://localhost:5150/api/integrate?expr=x%5E2&a=0&b=3"
+curl "http://localhost:5150/api/differentiate?expr=x%5E3&a=0&b=2"
+curl "http://localhost:5150/api/solve?equation=x%5E2-2&a=1&b=2"
+```
 
 ## Supported syntax
 
