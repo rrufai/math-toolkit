@@ -41,8 +41,8 @@ export function integrate(expression, variable = 'x', lowerBound, upperBound, st
     throw new Error('Lower and upper bounds must be finite numbers');
   }
 
-  if (!Number.isFinite(steps) || !Number.isInteger(steps) || steps <= 0) {
-    throw new Error('Steps must be a finite positive integer');
+  if (!Number.isInteger(steps) || steps < 2) {
+    throw new Error('Steps must be an integer greater than or equal to 2');
   }
 
   // Ensure steps is even
