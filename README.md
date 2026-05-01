@@ -10,7 +10,7 @@ crates/
   integrator/   — symbolic & numerical integration, plotting
   diff/         — symbolic differentiation CLI
   solver/       — root-finding (Brent's method)
-  cli/          — integrate / --solve CLI binary
+  cli/          — integrate / solve binaries
   web/          — Loco web server (REST + HTML UI)
 ```
 
@@ -20,6 +20,7 @@ crates/
 cargo build                                        # compile everything
 cargo run -p rust-integrator-cli -- "x^2" 0 3     # integrate x² over [0, 3]
 cargo run -p rust-integrator-cli -- --demo         # built-in demo suite
+cargo run -p rust-integrator-cli --bin solve -- "x^2 - 2" 1 2   # find root
 cargo run -p rust-integrator-diff -- "x^3" 0 2    # differentiate x³ over [0, 2]
 cargo run -p rust-integrator-web -- start          # web server on port 5150
 ```
@@ -27,9 +28,8 @@ cargo run -p rust-integrator-web -- start          # web server on port 5150
 ## CLI — `integrate`
 
 ```
-integrate <expr> [<a> <b>]             Integrate expr over [a, b] (default: [0, 1])
-integrate --solve <equation> <a> <b>   Find root of equation in [a, b]
-integrate --demo                       Run built-in demo and verification suite
+integrate <expr> [<a> <b>]    Integrate expr over [a, b] (default: [0, 1])
+integrate --demo               Run built-in demo and verification suite
 integrate --help
 ```
 
@@ -38,7 +38,22 @@ integrate --help
 ```bash
 integrate "x^2 + sin(x)" 0 3.14
 integrate "4*x^3 - 3*x^2"
-integrate --solve "x^2 - 2" 1 2
+integrate --demo
+```
+
+## CLI — `solve`
+
+```
+solve <equation> <a> <b>    Find root of equation in [a, b]
+solve --help
+```
+
+**Examples**
+
+```bash
+solve "x^2 - 2" 1 2
+solve "x^2 = 2" 1 2
+solve "sin(x)" 3 4
 ```
 
 ## CLI — `differentiate`

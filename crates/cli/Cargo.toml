@@ -7,6 +7,10 @@ edition = "2021"
 name = "integrate"
 path = "src/main.rs"
 
+[[bin]]
+name = "solve"
+path = "src/solve.rs"
+
 [dependencies]
 integrator-core = { path = "../integrator" }
 solver-core = { path = "../solver" }

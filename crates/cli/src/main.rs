@@ -1,5 +1,4 @@
 use integrator_core::{integrator, plot, first_var, parse};
-use solver_core::solve;
 
 enum PlotMode { AsciiOnly, AsciiAndSvg }
 
@@ -57,10 +56,15 @@ fn demo_with_svg(label: &str, expr: &str, a: f64, b: f64, plot_mode: PlotMode, s
     }
 }
 
+#[cfg(test)]
+use solver_core::solve;
+
+#[cfg(test)]
 fn run_solve(equation: &str, a: f64, b: f64) -> Result<(), String> {
     run_solve_with_svg(equation, a, b, "solve.svg")
 }
 
+#[cfg(test)]
 fn run_solve_with_svg(equation: &str, a: f64, b: f64, svg_path: &str) -> Result<(), String> {
     match solve(equation, a, b) {
         Err(e) => return Err(e),
@@ -110,7 +114,6 @@ fn print_help(prog: &str) {
     println!("  {} --help                       Show this help message", prog);
     println!("  {} --demo                       Run built-in demo and verification suite", prog);
     println!("  {} <expr> [<a> <b>]             Integrate expr over [a, b] (default: [0, 1])", prog);
-    println!("  {} --solve <equation> <a> <b>   Find root of equation in [a, b]", prog);
     println!();
     println!("Supported syntax:");
     println!("  Variables : any identifier (x, t, u, z, ...)");
@@ -122,9 +125,9 @@ fn print_help(prog: &str) {
     println!("Examples:");
     println!("  {} \"x^2 + sin(x)\" 0 3.14", prog);
     println!("  {} \"4*x^3 - 3*x^2\"", prog);
-    println!("  {} --solve \"x^2 - 2\" 1 2", prog);
     println!("  {} --demo", prog);
     println!();
+    println!("For root-finding, use the `solve` binary.");
     println!("For differentiation, use the `differentiate` binary.");
 }
 
@@ -225,15 +228,6 @@ fn run(args: &[String]) -> Result<(), String> {
         }
         Some("--demo") => {
             run_demo();
-        }
-        Some("--solve") => {
-            if args.len() != 5 {
-                return Err(format!("Usage: {} --solve <equation> <a> <b>", prog));
-            }
-            let equation = &args[2];
-            let a = parse_bound(&args[3])?;
-            let b = parse_bound(&args[4])?;
-            run_solve(equation, a, b)?;
         }
         Some(_) => {
             let (expr, a, b) = parse_args(args)?;
@@ -379,27 +373,6 @@ mod tests {
     }
 
     #[test]
-    fn test_run_solve_wrong_arg_count() {
-        let result = run(&make_args(&["prog", "--solve", "x^2 - 2"]));
-        assert!(result.is_err());
-        assert!(result.unwrap_err().contains("--solve"));
-    }
-
-    #[test]
-    fn test_run_solve_bad_lower_bound() {
-        let result = run(&make_args(&["prog", "--solve", "x^2 - 2", "bad", "2"]));
-        assert!(result.is_err());
-        assert!(result.unwrap_err().contains("not a valid number"));
-    }
-
-    #[test]
-    fn test_run_solve_bad_upper_bound() {
-        let result = run(&make_args(&["prog", "--solve", "x^2 - 2", "1", "bad"]));
-        assert!(result.is_err());
-        assert!(result.unwrap_err().contains("not a valid number"));
-    }
-
-    #[test]
     fn test_run_expr_ok() {
         assert!(run(&make_args(&["prog", "x^2", "0", "3"])).is_ok());
     }
@@ -412,7 +385,6 @@ mod tests {
 
     #[test]
     fn test_run_verification_fail_msg() {
-        // run_verification() always passes for valid expressions.
         assert!(run_verification());
     }
 
