@@ -1,0 +1,12 @@
+logger:
+  enable: true
+  level: info
+  format: compact
+
+server:
+  port: 5150
+  host: http://localhost
+  middlewares:
+    limit_payload:
+      enable: true
+      body_limit: 5mb

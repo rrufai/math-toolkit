@@ -1,0 +1,11 @@
+[package]
+name = "rust-integrator-diff"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "differentiate"
+path = "src/main.rs"
+
+[dependencies]
+integrator-core = { path = "../integrator" }
