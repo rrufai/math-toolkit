@@ -31,7 +31,14 @@ apiRouter.post('/derivative', (req, res) => {
   try {
     const { expression, variable = 'x', point } = req.body;
     if (!expression) return res.status(400).json({ error: 'expression is required' });
-    const scope = point !== undefined ? { [variable]: parseFloat(point) } : null;
+    let scope = null;
+    if (point !== undefined) {
+      const parsedPoint = parseFloat(point);
+      if (!Number.isFinite(parsedPoint)) {
+        return res.status(400).json({ error: 'point must be a finite number' });
+      }
+      scope = { [variable]: parsedPoint };
+    }
     const result = derivative(expression, variable, scope);
     res.json(result);
   } catch (err) {
