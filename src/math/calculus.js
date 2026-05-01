@@ -52,9 +52,11 @@ export function integrate(expression, variable = 'x', lowerBound, upperBound, st
   // Ensure steps is even
   if (steps % 2 !== 0) steps += 1;
 
+  const compiledExpression = math.compile(expression);
+
   const f = (val) => {
     const scope = { [variable]: val };
-    return math.evaluate(expression, scope);
+    return compiledExpression.evaluate(scope);
   };
 
   const h = (upperBound - lowerBound) / steps;
