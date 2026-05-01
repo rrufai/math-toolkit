@@ -37,6 +37,10 @@ program
   .option('-g, --guess <number>', 'Initial guess', parseFloat, 1)
   .action((equation, options) => {
     try {
+      if (!Number.isFinite(options.guess)) {
+        console.error(`\nError: --guess must be a finite number. Received: ${options.guess}\n`);
+        process.exit(1);
+      }
       const roots = solveEquation(equation, options.variable, options.guess);
       console.log(`\nEquation:   ${equation} = 0`);
       console.log(`Variable:   ${options.variable}`);
