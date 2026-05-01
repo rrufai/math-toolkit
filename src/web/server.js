@@ -14,8 +14,7 @@ app.use(express.static(join(__dirname, 'public')));
 app.use('/api', apiRouter);
 
 // Only bind the port when this file is executed directly (not imported).
-const isMain = process.argv[1] === fileURLToPath(import.meta.url);
-if (isMain) {
+if (process.argv[1] === __filename) {
   app.listen(PORT, () => {
     console.log(`Math Toolkit server running at http://localhost:${PORT}`);
   });
