@@ -18,7 +18,14 @@ test('solves x - 5 = 0', () => {
 
 test('solves x^3 - x = 0 (three roots)', () => {
   const roots = solveEquation('x^3 - x');
-  assert.ok(roots.length >= 2); // should find at least -1 and 0 and 1
+  const expectedRoots = [-1, 0, 1];
+  assert.equal(roots.length, expectedRoots.length);
+  assert.ok(
+    expectedRoots.every((expected) =>
+      roots.some((root) => Math.abs(root - expected) < 1e-5)
+    ),
+    `Expected roots to contain -1, 0, and 1, got ${JSON.stringify(roots)}`
+  );
 });
 
 test('solves linear equation 2*x + 3 = 7', () => {
