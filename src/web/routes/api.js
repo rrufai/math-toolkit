@@ -4,11 +4,104 @@ import { solveEquation } from '../../math/solver.js';
 import { derivative, integrate } from '../../math/calculus.js';
 
 const apiRouter = Router();
+const MAX_EXPRESSION_LENGTH = 500;
+const MAX_SCOPE_KEYS = 20;
+const MAX_SCOPE_DEPTH = 5;
+const MAX_SCOPE_STRING_LENGTH = 200;
+const BLOCKED_EXPRESSION_PATTERN = /\b(?:import|createUnit|reviver|evaluate|parse|simplify|derivative|resolve)\s*\(/;
+
+function isPlainObject(value) {
+  return Object.prototype.toString.call(value) === '[object Object]';
+}
+
+function validateScopeValue(value, depth = 0) {
+  if (depth > MAX_SCOPE_DEPTH) {
+    throw new Error('scope is too deeply nested');
+  }
+
+  if (
+    value === null ||
+    typeof value === 'number' ||
+    typeof value === 'boolean'
+  ) {
+    if (typeof value === 'number' && !Number.isFinite(value)) {
+      throw new Error('scope contains a non-finite number');
+    }
+    return;
+  }
+
+  if (typeof value === 'string') {
+    if (value.length > MAX_SCOPE_STRING_LENGTH) {
+      throw new Error('scope contains a string value that is too long');
+    }
+    return;
+  }
+
+  if (Array.isArray(value)) {
+    if (value.length > MAX_SCOPE_KEYS) {
+      throw new Error('scope contains an array that is too large');
+    }
+    for (const item of value) {
+      validateScopeValue(item, depth + 1);
+    }
+    return;
+  }
+
+  if (isPlainObject(value)) {
+    const entries = Object.entries(value);
+    if (entries.length > MAX_SCOPE_KEYS) {
+      throw new Error('scope contains too many keys');
+    }
+    for (const [key, nestedValue] of entries) {
+      if (key.length > 100) {
+        throw new Error('scope contains a key that is too long');
+      }
+      validateScopeValue(nestedValue, depth + 1);
+    }
+    return;
+  }
+
+  throw new Error('scope contains an unsupported value type');
+}
+
+function validateEvaluateInput(expression, scope) {
+  if (typeof expression !== 'string' || expression.trim() === '') {
+    throw new Error('expression is required');
+  }
+
+  if (expression.length > MAX_EXPRESSION_LENGTH) {
+    throw new Error('expression is too long');
+  }
+
+  if (BLOCKED_EXPRESSION_PATTERN.test(expression)) {
+    throw new Error('expression contains a disabled function');
+  }
+
+  if (scope === null || scope === undefined) {
+    return;
+  }
+
+  if (!isPlainObject(scope)) {
+    throw new Error('scope must be a plain object');
+  }
+
+  const entries = Object.entries(scope);
+  if (entries.length > MAX_SCOPE_KEYS) {
+    throw new Error('scope contains too many keys');
+  }
+
+  for (const [key, value] of entries) {
+    if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) {
+      throw new Error('scope contains an invalid variable name');
+    }
+    validateScopeValue(value, 1);
+  }
+}
 
 apiRouter.post('/evaluate', (req, res) => {
   try {
     const { expression, scope = {} } = req.body;
-    if (!expression) return res.status(400).json({ error: 'expression is required' });
+    validateEvaluateInput(expression, scope);
     const result = evaluate(expression, scope);
     res.json({ result: result.toString() });
   } catch (err) {
