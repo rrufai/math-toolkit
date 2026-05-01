@@ -7,6 +7,10 @@ import { math, MAX_EXPRESSION_LENGTH } from './mathInstance.js';
  * @returns {number|string} Result of the evaluation
  */
 export function evaluate(expression, scope = {}) {
+  if (typeof expression !== 'string') {
+    throw new Error('Expression must be a string');
+  }
+
   if (expression.length > MAX_EXPRESSION_LENGTH) {
     throw new Error(`Expression is too long (max ${MAX_EXPRESSION_LENGTH} characters)`);
   }
