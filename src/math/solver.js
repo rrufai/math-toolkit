@@ -58,7 +58,7 @@ export function solveEquation(expression, variable = 'x', initialGuess = 1) {
   for (const start of startPoints) {
     try {
       const root = newtonRoot(start);
-      if (root !== null && isFinite(root)) {
+      if (root !== null && Number.isFinite(root)) {
         // Round to avoid near-duplicates
         const rounded = Math.round(root * 1e8) / 1e8;
         // Check if already found a very close root

@@ -38,6 +38,9 @@ export function derivative(expression, variable = 'x', scope = null) {
  * @returns {number} Numerical integral value
  */
 export function integrate(expression, variable = 'x', lowerBound, upperBound, steps = 1000) {
+  if (typeof expression !== 'string' || expression.length === 0) {
+    throw new Error('Expression must be a non-empty string');
+  }
   if (expression.length > MAX_EXPRESSION_LENGTH) {
     throw new Error(`Expression is too long (max ${MAX_EXPRESSION_LENGTH} characters)`);
   }
@@ -56,7 +59,23 @@ export function integrate(expression, variable = 'x', lowerBound, upperBound, st
 
   const f = (val) => {
     const scope = { [variable]: val };
-    return compiledExpression.evaluate(scope);
+    let evaluated;
+
+    try {
+      evaluated = math.number(compiledExpression.evaluate(scope));
+    } catch (err) {
+      throw new Error(
+        `Expression must evaluate to a real finite number at ${variable}=${val}: ${err.message}`
+      );
+    }
+
+    if (!Number.isFinite(evaluated)) {
+      throw new Error(
+        `Expression must evaluate to a real finite number at ${variable}=${val}`
+      );
+    }
+
+    return evaluated;
   };
 
   const h = (upperBound - lowerBound) / steps;
