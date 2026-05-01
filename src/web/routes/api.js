@@ -95,7 +95,7 @@ function validateEvaluateInput(expression, scope) {
 
   for (const [key, value] of entries) {
     if (DANGEROUS_SCOPE_KEYS.has(key)) {
-      throw new Error(`scope contains a reserved key: ${key}`);
+      throw new Error(`scope contains a dangerous key that could enable prototype pollution: ${key}`);
     }
     if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) {
       throw new Error('scope contains an invalid variable name');
