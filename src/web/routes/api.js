@@ -9,9 +9,22 @@ const MAX_SCOPE_KEYS = 20;
 const MAX_SCOPE_DEPTH = 5;
 const MAX_SCOPE_STRING_LENGTH = 200;
 const BLOCKED_EXPRESSION_PATTERN = /\b(?:import|createUnit|reviver|evaluate|parse|simplify|derivative|resolve)\s*\(/;
+const DANGEROUS_SCOPE_KEYS = new Set(['__proto__', 'prototype', 'constructor']);
 
 function isPlainObject(value) {
   return Object.prototype.toString.call(value) === '[object Object]';
+}
+
+function validateExpression(expression) {
+  if (typeof expression !== 'string' || expression.trim() === '') {
+    throw new Error('expression is required');
+  }
+  if (expression.length > MAX_EXPRESSION_LENGTH) {
+    throw new Error('expression is too long');
+  }
+  if (BLOCKED_EXPRESSION_PATTERN.test(expression)) {
+    throw new Error('expression contains a disabled function');
+  }
 }
 
 function validateScopeValue(value, depth = 0) {
@@ -65,17 +78,7 @@ function validateScopeValue(value, depth = 0) {
 }
 
 function validateEvaluateInput(expression, scope) {
-  if (typeof expression !== 'string' || expression.trim() === '') {
-    throw new Error('expression is required');
-  }
-
-  if (expression.length > MAX_EXPRESSION_LENGTH) {
-    throw new Error('expression is too long');
-  }
-
-  if (BLOCKED_EXPRESSION_PATTERN.test(expression)) {
-    throw new Error('expression contains a disabled function');
-  }
+  validateExpression(expression);
 
   if (scope === null || scope === undefined) {
     return;
@@ -91,6 +94,9 @@ function validateEvaluateInput(expression, scope) {
   }
 
   for (const [key, value] of entries) {
+    if (DANGEROUS_SCOPE_KEYS.has(key)) {
+      throw new Error(`scope contains a reserved key: ${key}`);
+    }
     if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) {
       throw new Error('scope contains an invalid variable name');
     }
@@ -163,7 +169,7 @@ const MAX_PLOT_STEPS = 10000;
 apiRouter.post('/plot', (req, res) => {
   try {
     const { expression, from = -10, to = 10, steps = 100, variable = 'x' } = req.body;
-    if (!expression) return res.status(400).json({ error: 'expression is required' });
+    validateExpression(expression);
 
     const plotFrom = Number(from);
     const plotTo = Number(to);
