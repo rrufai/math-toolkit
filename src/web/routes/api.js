@@ -187,7 +187,7 @@ apiRouter.post('/plot', (req, res) => {
       const x = plotFrom + i * step;
       try {
         const y = evaluate(expression, { [variable]: x });
-        points.push({ x, y: typeof y === 'number' ? y : null });
+        points.push({ x, y: Number.isFinite(y) ? y : null });
       } catch {
         points.push({ x, y: null });
       }
