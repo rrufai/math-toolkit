@@ -13,8 +13,10 @@ app.use(express.json());
 app.use(express.static(join(__dirname, 'public')));
 app.use('/api', apiRouter);
 
-app.listen(PORT, () => {
-  console.log(`Math Toolkit server running at http://localhost:${PORT}`);
-});
+if (process.argv[1] === __filename) {
+  app.listen(PORT, () => {
+    console.log(`Math Toolkit server running at http://localhost:${PORT}`);
+  });
+}
 
 export { app };
