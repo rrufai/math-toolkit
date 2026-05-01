@@ -22,12 +22,16 @@ export function solveEquation(expression, variable = 'x', initialGuess = 1) {
   const newtonRoot = (start) => {
     let x = start;
     for (let i = 0; i < 1000; i++) {
+      if (!Number.isFinite(x)) return null;
       const fx = f(x);
       const dfx = df(x);
+      if (!Number.isFinite(fx) || !Number.isFinite(dfx)) return null;
       if (Math.abs(dfx) < 1e-12) break;
       const xNext = x - fx / dfx;
+      if (!Number.isFinite(xNext)) return null;
       if (Math.abs(xNext - x) < 1e-10) {
-        return Math.abs(f(xNext)) < 1e-6 ? xNext : null;
+        const fNext = f(xNext);
+        return Number.isFinite(fNext) && Math.abs(fNext) < 1e-6 ? xNext : null;
       }
       x = xNext;
     }
