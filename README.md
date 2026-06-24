@@ -1,6 +1,6 @@
-# rust-integrator
+# math-toolkit
 
-A Rust workspace implementing symbolic and numerical calculus tools — integration, differentiation, root-finding, and plotting — exposed via a CLI, a web server, and a library API.
+A web application that allows working with symbolic and numerical calculus tools — integration, differentiation, root-finding, and plotting — exposed via a CLI, a web server, and a library API.
 
 ## Workspace layout
 
